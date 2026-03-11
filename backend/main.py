@@ -18,20 +18,21 @@ app.add_middleware(
 def home():
     return{"message":"GitGenie AI Running"}
 @app.get("/repo")
-def repo_info(username:str,repo:str):
+def repo_info(username: str, repo: str):
 
-    url=f"https://api.github.com/repos/{username}/{repo}"
-    res=requests.get(url)
-    data=res.json()
+    url = f"https://api.github.com/repos/{username}/{repo}"
+    res = requests.get(url)
 
     if res.status_code != 200:
-        return {"error":"Repository not found"}
+        return {"error": "Repository not found"}
 
-    return{
-        "name":data.get("name"),
-        "description":data.get("description"),
-        "stars":data.get("stargazers_count"),
-        "language":data.get("language"),
+    data = res.json()
+
+    return {
+        "name": data.get("name", "Unknown"),
+        "description": data.get("description") or "No description provided",
+        "stars": data.get("stargazers_count", 0),
+        "language": data.get("language", "Unknown")
     }
 @app.get("/contributors")
 def repo_contributors(username: str, repo: str):
