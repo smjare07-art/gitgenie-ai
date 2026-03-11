@@ -1,14 +1,13 @@
 let username
 let repo
 
-const API = "https://gitgenie-jkir.onrender.com"
-
 function values(){
  username = document.getElementById("username").value
  repo = document.getElementById("repo").value
 }
 
-// Repo Info
+const API = "https://gitgenie-jkir.onrender.com"
+
 async function repoInfo(){
 
 values()
@@ -21,7 +20,6 @@ JSON.stringify(data,null,2)
 
 }
 
-// Contributors
 async function contributors(){
 
 values()
@@ -34,7 +32,6 @@ JSON.stringify(data,null,2)
 
 }
 
-// Commits
 async function commits(){
 
 values()
@@ -47,7 +44,6 @@ JSON.stringify(data,null,2)
 
 }
 
-// AI Explain
 async function explain(){
 
 values()
@@ -60,7 +56,6 @@ data.explanation
 
 }
 
-// Chat Repo
 async function chatRepo(){
 
 values()
@@ -75,7 +70,6 @@ data.response
 
 }
 
-// Generate README
 async function generateReadme(){
 
 values()
@@ -88,7 +82,6 @@ data.readme
 
 }
 
-// Bug Detector
 async function detectBugs(){
 
 values()
@@ -101,7 +94,6 @@ JSON.stringify(data,null,2)
 
 }
 
-// Repo Files
 async function showFiles(){
 
 values()
@@ -114,7 +106,6 @@ JSON.stringify(data,null,2)
 
 }
 
-// Repo Stats
 async function showStats(){
 
 values()
@@ -127,7 +118,6 @@ JSON.stringify(data,null,2)
 
 }
 
-// Explain File
 async function explainFile(){
 
 values()
@@ -142,7 +132,6 @@ data.explanation
 
 }
 
-// File Tree Explorer
 async function loadFileTree(path=""){
 
 values()
@@ -170,7 +159,6 @@ document.getElementById("fileTree").innerHTML = treeHTML
 
 }
 
-// File Preview
 async function openFile(path){
 
 values()

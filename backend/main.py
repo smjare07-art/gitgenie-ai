@@ -19,14 +19,19 @@ def home():
     return{"message":"GitGenie AI Running"}
 @app.get("/repo")
 def repo_info(username:str,repo:str):
+
     url=f"https://api.github.com/repos/{username}/{repo}"
-    data=requests.get(url).json()
+    res=requests.get(url)
+    data=res.json()
+
+    if res.status_code != 200:
+        return {"error":"Repository not found"}
 
     return{
-        "name":data["name"],
-        "description":data["description"],
-        "stars":data["stargazers_count"],
-        "language":data["language"],
+        "name":data.get("name"),
+        "description":data.get("description"),
+        "stars":data.get("stargazers_count"),
+        "language":data.get("language"),
     }
 @app.get("/contributors")
 def repo_contributors(username: str, repo: str):
