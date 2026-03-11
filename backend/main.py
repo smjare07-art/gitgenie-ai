@@ -1,3 +1,6 @@
+# GitGenie AI
+# Developed by Shubham Jare
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import requests
