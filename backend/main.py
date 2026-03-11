@@ -4,11 +4,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import requests
-import base64
 
 app = FastAPI()
 
-# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -16,85 +14,50 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Home
 @app.get("/")
 def home():
-    return {"message": "GitGenie AI Running"}
-
-# Health check
-@app.get("/health")
-def health():
-    return {"status": "ok"}
-
-# Repo Info
+    return{"message":"GitGenie AI Running"}
 @app.get("/repo")
-def repo_info(username: str, repo: str):
+def repo_info(username:str,repo:str):
+    url=f"https://api.github.com/repos/{username}/{repo}"
+    data=requests.get(url).json()
 
-    url = f"https://api.github.com/repos/{username}/{repo}"
-    response = requests.get(url)
-
-    if response.status_code != 200:
-        return {"error": "Repository not found"}
-
-    data = response.json()
-
-    return {
-        "name": data.get("name"),
-        "description": data.get("description"),
-        "stars": data.get("stargazers_count"),
-        "language": data.get("language")
+    return{
+        "name":data["name"],
+        "description":data["description"],
+        "stars":data["stargazers_count"],
+        "language":data["language"],
     }
-
-# Contributors
 @app.get("/contributors")
 def repo_contributors(username: str, repo: str):
 
     url = f"https://api.github.com/repos/{username}/{repo}/contributors"
-    response = requests.get(url)
-
-    if response.status_code != 200:
-        return {"error": "Cannot fetch contributors"}
-
-    data = response.json()
+    data = requests.get(url).json()
 
     result = []
 
     for c in data[:5]:
         result.append({
-            "name": c.get("login"),
-            "contributions": c.get("contributions")
+            "name": c["login"],
+            "contributions": c["contributions"]
         })
 
     return result
-
-# Commits
 @app.get("/commits")
 def repo_commits(username: str, repo: str):
 
     url = f"https://api.github.com/repos/{username}/{repo}/commits"
-    response = requests.get(url)
-
-    if response.status_code != 200:
-        return {"error": "Cannot fetch commits"}
-
-    data = response.json()
+    data = requests.get(url).json()
 
     commits = []
 
     for c in data[:5]:
-
-        commit = c.get("commit", {})
-        author = commit.get("author", {})
-
         commits.append({
-            "author": author.get("name", "Unknown"),
-            "message": commit.get("message", "No message")
+            "author": c["commit"]["author"]["name"],
+            "message": c["commit"]["message"]
         })
 
     return commits
-
-# Repo Explanation
 @app.get("/explain")
 def explain_repo(username: str, repo: str):
 
@@ -102,23 +65,22 @@ def explain_repo(username: str, repo: str):
     data = requests.get(url).json()
 
     explanation = f"""
-Project Name: {data.get('name')}
+    Project Name: {data['name']}
 
-Description:
-{data.get('description')}
+    Description:
+    {data['description']}
 
-Language Used:
-{data.get('language')}
+    Language Used:
+    {data['language']}
 
-Stars:
-{data.get('stargazers_count')}
+    Stars:
+    {data['stargazers_count']}
 
-This project is mainly built using {data.get('language')} and is popular with {data.get('stargazers_count')} stars on GitHub.
-"""
+    This project is mainly built using {data['language']} 
+    and is popular with {data['stargazers_count']} stars on GitHub.
+    """
 
     return {"explanation": explanation}
-
-# Chat Repo
 @app.get("/chat")
 def chat_with_repo(username: str, repo: str, question: str):
 
@@ -126,21 +88,19 @@ def chat_with_repo(username: str, repo: str, question: str):
     data = requests.get(url).json()
 
     answer = f"""
-Repository: {data.get('name')}
+    Repository: {data['name']}
 
-Question: {question}
+    Question: {question}
 
-Answer:
-This project is mainly built using {data.get('language')}.
-It has {data.get('stargazers_count')} stars on GitHub.
+    Answer:
+    This project is mainly built using {data['language']}.
+    It has {data['stargazers_count']} stars on GitHub.
 
-Description:
-{data.get('description')}
-"""
+    Description:
+    {data['description']}
+    """
 
     return {"response": answer}
-
-# README Generator
 @app.get("/generate-readme")
 def generate_readme(username: str, repo: str):
 
@@ -148,16 +108,16 @@ def generate_readme(username: str, repo: str):
     data = requests.get(url).json()
 
     readme = f"""
-# {data.get('name')}
+# {data['name']}
 
 ## Description
-{data.get('description')}
+{data['description']}
 
 ## Tech Stack
-{data.get('language')}
+{data['language']}
 
 ## Stars
-⭐ {data.get('stargazers_count')}
+⭐ {data['stargazers_count']}
 
 ## Installation
 
@@ -169,8 +129,6 @@ GitHub: https://github.com/{username}
 """
 
     return {"readme": readme}
-
-# Bug Detector
 @app.get("/bugs")
 def bug_detector(username: str, repo: str):
 
@@ -180,15 +138,10 @@ def bug_detector(username: str, repo: str):
     bugs = []
 
     for issue in data[:5]:
-
-        title = issue.get("title", "")
-
-        if "bug" in title.lower():
-            bugs.append(title)
+        if "bug" in issue["title"].lower():
+            bugs.append(issue["title"])
 
     return {"possible_bugs": bugs}
-
-# Repo Files
 @app.get("/files")
 def repo_files(username: str, repo: str):
 
@@ -197,17 +150,13 @@ def repo_files(username: str, repo: str):
 
     files = []
 
-    if isinstance(data, list):
-
-        for item in data:
-            files.append({
-                "name": item.get("name"),
-                "type": item.get("type")
-            })
+    for item in data:
+        files.append({
+            "name": item["name"],
+            "type": item["type"]
+        })
 
     return files
-
-# Repo Stats
 @app.get("/stats")
 def repo_stats(username: str, repo: str):
 
@@ -215,40 +164,43 @@ def repo_stats(username: str, repo: str):
     data = requests.get(url).json()
 
     return {
-        "stars": data.get("stargazers_count"),
-        "forks": data.get("forks_count"),
-        "watchers": data.get("watchers_count")
+        "stars": data["stargazers_count"],
+        "forks": data["forks_count"],
+        "watchers": data["watchers_count"]
     }
-
-# Explain File / Folder
 @app.get("/explain-file")
 def explain_file(username: str, repo: str, path: str):
 
     url = f"https://api.github.com/repos/{username}/{repo}/contents/{path}"
     data = requests.get(url).json()
 
+    # If folder
     if isinstance(data, list):
 
-        files = [item.get("name") for item in data]
+        files = [item["name"] for item in data]
 
         explanation = f"""
 Folder: {path}
 
+This is a directory in the repository.
+
 Files inside:
 {', '.join(files)}
+
+This folder likely contains project related resources.
 """
 
     else:
 
         explanation = f"""
-File: {data.get('name')}
+File: {data['name']}
 
 This file belongs to repository {repo}.
+
+It is likely used for implementing project functionality.
 """
 
     return {"explanation": explanation}
-
-# File Tree
 @app.get("/file-tree")
 def file_tree(username: str, repo: str, path: str = ""):
 
@@ -257,18 +209,16 @@ def file_tree(username: str, repo: str, path: str = ""):
 
     tree = []
 
-    if isinstance(data, list):
-
-        for item in data:
-            tree.append({
-                "name": item.get("name"),
-                "type": item.get("type"),
-                "path": item.get("path")
-            })
+    for item in data:
+        tree.append({
+            "name": item["name"],
+            "type": item["type"],
+            "path": item["path"]
+        })
 
     return tree
+import base64
 
-# File Content Preview
 @app.get("/file-content")
 def file_content(username: str, repo: str, path: str):
 
@@ -276,9 +226,7 @@ def file_content(username: str, repo: str, path: str):
     data = requests.get(url).json()
 
     if "content" in data:
-
         content = base64.b64decode(data["content"]).decode("utf-8", errors="ignore")
-
     else:
         content = "Cannot preview this file"
 
