@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>GitGenie AI</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+</head>
+
+<body>
+
+<header>
+<h1>🚀 GitGenie AI</h1>
+<p>Smart GitHub Repository Analyzer</p>
+</header>
+
+<div class="container">
+
+<div class="search-card">
+
+<input id="username" placeholder="GitHub Username">
+<input id="repo" placeholder="Repository Name">
+
+</div>
+
+<div class="dashboard">
+
+<button onclick="repoInfo()">Repo Info</button>
+<button onclick="contributors()">Contributors</button>
+<button onclick="commits()">Commits</button>
+<button onclick="explain()">AI Explain</button>
+
+<button onclick="chatRepo()">Chat Repo</button>
+<button onclick="generateReadme()">Generate README</button>
+<button onclick="detectBugs()">Bug Detector</button>
+
+<button onclick="showFiles()">Repo Files</button>
+<button onclick="showStats()">Repo Stats</button>
+<button onclick="explainFile()">Explain File</button>
+
+<button onclick="loadFileTree()">File Explorer</button>
+
+</div>
+
+<div class="result-panel">
+
+<h3>Output</h3>
+
+<pre id="result">Results will appear here...</pre>
+
+</div>
+
+<!-- VS Code style explorer -->
+
+<div class="explorer">
+
+<div id="fileTree"></div>
+
+<div class="code-viewer">
+
+<pre><code id="codePreview"></code></pre>
+
+</div>
+
+</div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
